@@ -267,7 +267,7 @@ public class Model
 						Node toUpdate = nodes.get(n);
 						//set reservation in all nodes in THS
 						toUpdate.setTimeSlotReservation(slotToReserve, 
-								toAttemptReservation.getID());
+								toAttemptReservation.getID(), toAttemptReservation.getRemainingReservationDuration());
 						//Set initial FI in all nodes in THS
 						toUpdate.setFI(slotToReserve, 
 								toAttemptReservation.getID());
@@ -359,6 +359,8 @@ public class Model
 		}
 		for(Node n: nodes)
 		{
+			n.updateReservationDurations();
+			n.clearExpiredDurations();
 			n.clearStaleCache(this.maxMemory);
 		}
 		//System.out.println(c.getFrame());

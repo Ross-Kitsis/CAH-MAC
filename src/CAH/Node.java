@@ -157,9 +157,10 @@ public class Node
 	 * @param index
 	 * @param ID
 	 */
-	public void setTimeSlotReservation(int index, int ID)
+	public void setTimeSlotReservation(int index, int ID, int duration)
 	{
-		this.timeSlots[index].setHolder(ID);;
+		this.timeSlots[index].setHolder(ID);
+		this.timeSlots[index].setDuration(duration);
 	}
 	
 	public ReservationBean[] getTimeSlots()
@@ -294,6 +295,16 @@ public class Node
 				this.numSent++;
 				toSend = new Message(Integer.parseInt(mID), this.ID, nodeToRecieve,
 						this.reservation, clock.getTime(),false, this.FI, c);
+				
+				//Decrement remaining reservation time, if the reminaing reservation time is 0, set reservation to 0 and reset wait counter
+				this.remainingReservationTime--;
+				if(this.remainingReservationTime == 0)
+				{
+					
+					this.timeSlots[this.reservation].setHolder(-1);
+					this.reservation = -1;
+					this.waitCount = 0;
+				}
 			}
 		}else if(this.retransIndex == currentTimeSlot && 
 						this.frameRetransmit == clock.getFrame())
@@ -571,19 +582,11 @@ public class Node
 		
 		for(int i =0; i < this.numSlots; i++)
 		{
-//			if(timeSlots[i] != -1 && timeSlots[i] != mFI[i] && mFI[i] != -1)
-//			{
-//				System.out.println(timeSlots[i] + "   " + mFI[i]);
-//				
-//				Scanner in = new Scanner(System.in);
-//				in.next();
-//				
-//				
-//			}
 			if(this.timeSlots[i].getHolder() == -1 && mFI[i] != -1)
 			{
 				//System.out.println("Message from " + sID + " at " + clock.getTimeSlot());
 				this.timeSlots[i].setHolder(mFI[i]);
+				this.timeSlots[i].setDuration(this.maxReservationDuration);
 				if(!this.containedInOHS(sID))
 				{
 					//Add sender to OHS if not already there
@@ -598,6 +601,7 @@ public class Node
 						//Add FI entries in the message FI to THS if not already there
 						this.THS.add(mFI[j]);
 						this.timeSlots[j].setHolder(mFI[j]);
+						this.timeSlots[j].setDuration(this.maxReservationDuration); //****MAY NEED TO CHANGE THIS ***
 					}
 				}
 				
@@ -833,6 +837,9 @@ public class Node
 			}
 		}
 	}
+	/**
+	 * Clears a nodes reservation and its OHS and THS
+	 */
 	public void clearReservation()
 	{
 	//	System.out.println("Node " + this.ID + " reservation cleared");
@@ -845,6 +852,29 @@ public class Node
 		this.OHS = new ArrayList<Integer>();
 		this.THS = new ArrayList<Integer>();
 	}
+	/**
+	 * Decrements durations of timeslots
+	 */
+	public void updateReservationDurations()
+	{
+		for(int i = 0; i < this.numSlots; i++)
+		{
+			this.timeSlots[i].decrementDuration();
+		}
+	}
+	/**
+	 * Clears durations which have expired (Duration = 0)
+	 */
+	public void clearExpiredDurations()
+	{
+		for(int i = 0; i < this.numSlots; i++)
+		{
+			if(this.timeSlots[i].getDuration() == 0)
+			{
+				this.timeSlots[i].setHolder(-1);
+			}
+		}
+	}
 	public int getNumSent()
 	{
 		return this.numSent;
@@ -853,4 +883,5 @@ public class Node
 	{
 		return this.success;
 	}
+	
 }

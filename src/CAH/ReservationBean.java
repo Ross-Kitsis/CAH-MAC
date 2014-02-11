@@ -29,6 +29,10 @@ public class ReservationBean
 	public void setDuration(int duration) {
 		this.duration = duration;
 	}
+	public void decrementDuration()
+	{
+		this.duration--;
+	}
 	
 	
 }
