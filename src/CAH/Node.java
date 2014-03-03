@@ -17,6 +17,7 @@ public class Node
 	private List<Integer> THS = new ArrayList<Integer>();
 	
 	Clock clock = Clock.CLOCK;
+	RetransmitterTracker rt = RetransmitterTracker.RetransmittorTracker;
 	
 	//Timeslot variables
 	private int reservation = -1; // -1 is default if have no reservation
@@ -375,21 +376,16 @@ public class Node
 			int receiverID = m.getReceiverID();
 			boolean containedInOHS = containedInOHS(receiverID);
 			
-			
-			
-
-
 			if(this.lastRecMsgTime != clock.getTime())
 			{
 				this.lastRecMsgTime = clock.getTime();
 				
 				if(isNewMsg)
 				{
-					if(senderID == 300)
+					if(containedInOHS)
 					{
-						//System.out.println("Message sent at " + receiveTimeSlot + " got it at:" + clock.getTimeSlot() + " from " + senderID);
+						rt.AddPossibleRetransmitNode(m);
 					}
-					//this.FI[receiveTimeSlot] = senderID;
 					this.FI[receiveTimeSlot] = senderID; //Set FI to show we know node s has the sth timeslot
 					this.addToNeihgbourTables(senderID, m.getFID());
 					

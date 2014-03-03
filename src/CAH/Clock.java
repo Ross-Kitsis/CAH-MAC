@@ -8,26 +8,13 @@ public class Clock
 {
 	private int time = 0;
 	private int numSlots;
-	private static Clock instance = null;
+	public final static Clock CLOCK = new Clock();
 	
 	private Clock()
 	{
 		
 	}
 	
-	/*
-	public static Clock getInstance()
-	{
-		if(instance == null)
-		{
-			instance = new Clock();
-			return instance;
-		}else
-		{
-			return instance;
-		}
-	} */
-	public final static Clock CLOCK = new Clock();
 	/**
 	 * Sets the number of timeslots
 	 * @param numSlots

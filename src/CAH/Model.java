@@ -562,6 +562,24 @@ public class Model
 			}
 		}
 	}
+	public double getAverageNumberOfOHSSize()
+	{
+		double avg = 0.0;
+		int numNodesProc = 0;
+		
+		for(Node n: this.nodes)
+		{
+			if(n.getReservation() != -1)
+			{
+				avg = avg + n.getOHS().size();
+				numNodesProc++;
+			}
+		}
+		
+		avg = avg/numNodesProc;
+		
+		return avg;
+	}
 	public void resetNodesWithoutReservation()
 	{
 		for(Node n: noRes)

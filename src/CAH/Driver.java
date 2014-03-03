@@ -45,6 +45,8 @@ public class Driver
 				density, range, b, reservationDuration, numSlots, maxMemory);
 		m.buildModel();
 		
+		RetransmitterTracker rt = RetransmitterTracker.RetransmittorTracker;
+		
 		List<Node> nodes = m.getAllNodes();
 //		for(int i = 0; i < numNodes; i++)
 //		{
@@ -73,12 +75,16 @@ public class Driver
 		}*/
 		
 		System.out.println("\n\n\n");
+		double avgNumNodes = 0;
 		for(int num = 0; num < numTrials; num++)
 		{
-			for( int p = 5; p <=100; p = p + 5)
+			for( int p = 0; p <=100; p = p + 5)
 			{
 				m.setAllNodePoS(p/100.0);
 				//m.setAllNodePoS(50/100.0);
+				
+				avgNumNodes = m.getAverageNumberOfOHSSize();
+				
 				for(int i = 0; i < numFrames; i++)
 				{
 					m.processFrame();
@@ -97,13 +103,15 @@ public class Driver
 					System.out.print(t + ",");
 				}*/
 				//System.out.println("");
-				System.out.println(/*"TEST"*/ p + "," + (double)suc/numSent);
-				pw.println(p + "," + (double)suc/numSent);
+				System.out.println(p + "," + (double)suc/numSent + "," + rt.getAverageNumberOfRetransmittors());
+				pw.println(p + "," + (double)suc/numSent + "," + rt.getAverageNumberOfRetransmittors());
 				
 				c.reset();
 				m.resetNodes();
 				m.resetNodesWithoutReservation();
+				rt.reset();
 			}
+			pw.println(avgNumNodes);
 		}
 //		for(int i = 0; i < numNodes; i++)
 //		{
@@ -115,6 +123,7 @@ public class Driver
 //			}
 //			System.out.println("");
 //		}
+		
 		pw.close();
 	}
 }
