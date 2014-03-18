@@ -18,7 +18,7 @@ public class Driver
 		int width = 5;
 		int range = 200;
 		double PoS = 0.5;
-		double density = 0.01;
+		double density = 0.0175;
 		int numSlots = 60;
 
 		//AdHoc parameters
